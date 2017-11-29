@@ -8,6 +8,6 @@ package tools;
 
 public class Sound {
 	public static enum SOUND {
-		PhantomDestroyed, HeroesGotHit, None
+		GetItem, EnnemyCaptured, None, bonus1, bonus2, bonus3,
 	};
 }

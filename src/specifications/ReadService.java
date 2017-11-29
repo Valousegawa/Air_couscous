@@ -6,6 +6,7 @@
  * ******************************************************/
 package specifications;
 
+import tools.Obstacle;
 import tools.Position;
 import tools.Sound;
 
@@ -35,4 +36,8 @@ public interface ReadService {
 	public ArrayList<ElementService> getBonus();
 
 	public Sound.SOUND getSoundEffect();
+	
+	public ArrayList<Obstacle> getObstacles();
+	
+	public int getBonusValue();
 }

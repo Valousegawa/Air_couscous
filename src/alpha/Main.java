@@ -54,7 +54,7 @@ public class Main extends Application {
 		viewer = new Viewer();
 
 		((Engine) engine).bindDataService(data);
-		((Viewer) viewer).bindReadService(data);
+		((Viewer) viewer).bindReadService(data, engine);
 
 		data.init();
 		engine.init();
@@ -79,6 +79,8 @@ public class Main extends Application {
 					engine.setHeroesCommand(User.COMMAND.UP);
 				if (event.getCode() == KeyCode.DOWN)
 					engine.setHeroesCommand(User.COMMAND.DOWN);
+				if (event.getCode() == KeyCode.SPACE)
+					engine.bonus_activated();
 				event.consume();
 			}
 		});
@@ -132,12 +134,16 @@ public class Main extends Application {
 			@Override
 			public void handle(long l) {
 				scene.setRoot(((Viewer) viewer).getPanel());
+				System.out.println(data.getSoundEffect());
 				switch (data.getSoundEffect()) {
-				case PhantomDestroyed:
-					new MediaPlayer(new Media(getHostServices().getDocumentBase() + "src/sound/waterdrip.mp3")).play();
+				case bonus1:
+					new MediaPlayer(new Media(getHostServices().getDocumentBase() + "src/sound/bonus3.mp3")).play();
 					break;
-				case HeroesGotHit:
-					new MediaPlayer(new Media(getHostServices().getDocumentBase() + "src/sound/waterdrip.mp3")).play();
+				case bonus2:
+					new MediaPlayer(new Media(getHostServices().getDocumentBase() + "src/sound/bonus3.mp3")).play();
+					break;
+				case bonus3:
+					new MediaPlayer(new Media(getHostServices().getDocumentBase() + "src/sound/bonus3.mp3")).play();
 					break;
 				default:
 					break;
@@ -145,36 +151,5 @@ public class Main extends Application {
 			}
 		};
 		timer.start();
-	}
-
-	// ---ARGUMENTS---//
-	private static void readArguments(String[] args) {
-		if (args.length > 0 && args[0].charAt(0) != '-') {
-			System.err.println("Syntax error: use option -h for help.");
-			return;
-		}
-		for (int i = 0; i < args.length; i++) {
-			if (args[i].charAt(0) == '-') {
-				if (args[i + 1].charAt(0) == '-') {
-					System.err.println("Option " + args[i] + " expects an argument but received none.");
-					return;
-				}
-				switch (args[i]) {
-				case "-inFile":
-					fileName = args[i + 1];
-					break;
-				case "-h":
-					System.out.println("Options:");
-					System.out.println(
-							" -inFile FILENAME: (UNUSED AT THE MOMENT) set file name for input parameters. Default name is"
-									+ HardCodedParameters.defaultParamFileName + ".");
-					break;
-				default:
-					System.err.println("Unknown option " + args[i] + ".");
-					return;
-				}
-				i++;
-			}
-		}
 	}
 }

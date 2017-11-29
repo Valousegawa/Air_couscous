@@ -7,6 +7,7 @@
 package data;
 
 import tools.HardCodedParameters;
+import tools.Obstacle;
 import tools.Position;
 import tools.Sound;
 
@@ -19,9 +20,10 @@ import java.util.ArrayList;
 
 public class Data implements DataService {
 	private Position heroesPosition;
-	private int stepNumber, score;
+	private int stepNumber, score, bonus_value;
 	private ArrayList<ElementService> ennemies;
 	private ArrayList<ElementService> bonus;
+	private ArrayList<Obstacle> obstacles;
 	private double heroesWidth, heroesHeight, ennemyWidth, ennemyHeight, bonusWidth, bonusHeight;
 	private Sound.SOUND sound;
 
@@ -33,15 +35,17 @@ public class Data implements DataService {
 		heroesPosition = new Position(HardCodedParameters.heroesStartX, HardCodedParameters.heroesStartY);
 		ennemies = new ArrayList<ElementService>();
 		bonus = new ArrayList<ElementService>();
+		obstacles = new Obstacle().getObstacles();
 		
 		stepNumber = 0;
 		score = 0;
+		bonus_value = 90;
 		heroesWidth = HardCodedParameters.heroesWidth;
 		heroesHeight = HardCodedParameters.heroesHeight;
-		ennemyWidth = HardCodedParameters.phantomWidth;
-		ennemyHeight = HardCodedParameters.phantomHeight;
-		bonusWidth = 0;
-		bonusHeight = 0;
+		ennemyWidth = HardCodedParameters.ennemyWidth;
+		ennemyHeight = HardCodedParameters.ennemyHeight;
+		bonusWidth = HardCodedParameters.bonusWidth;
+		bonusHeight = HardCodedParameters.bonusHeight;
 		sound = Sound.SOUND.None;
 	}
 
@@ -145,5 +149,26 @@ public class Data implements DataService {
 	public void setEnnemies(ArrayList<ElementService> ennemies) {
 		this.ennemies = ennemies;
 		
+	}
+
+	@Override
+	public ArrayList<Obstacle> getObstacles() {
+		return obstacles;
+	}
+
+	@Override
+	public int getBonusValue() {
+		return bonus_value;
+	}
+
+	@Override
+	public void addBonusValue(int value) {
+		bonus_value += value;
+		
+	}
+
+	@Override
+	public void resetBonusValue() {
+		bonus_value = 0;
 	}
 }

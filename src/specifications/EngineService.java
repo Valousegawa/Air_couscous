@@ -18,4 +18,14 @@ public interface EngineService {
 	public void setHeroesCommand(User.COMMAND c);
 
 	public void releaseHeroesCommand(User.COMMAND c);
+	
+	public int getPressedDirection();
+
+	public void bonus_activated();
+
+	public String getSprite();
+
+	double getTimer();
+	
+	boolean gameState();
 }

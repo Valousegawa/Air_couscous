@@ -15,10 +15,12 @@ import specifications.ElementService;
 public class MoveEnnemies implements ElementService {
 	private Position position;
 	private Random r;
+	private int dir;
 
 	public MoveEnnemies(Position p) {
 		position = p;
 		r = new Random();
+		dir = 4;
 	}
 
 	@Override
@@ -43,5 +45,16 @@ public class MoveEnnemies implements ElementService {
 	@Override
 	public void setPosition(Position p) {
 		position = p;
+	}
+
+	@Override
+	public void setDirection(int i) {
+		dir = i;
+		
+	}
+
+	@Override
+	public int getDirection() {
+		return dir;
 	}
 }

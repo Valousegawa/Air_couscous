@@ -18,4 +18,8 @@ public interface ElementService {
 	public MOVE getAction();
 
 	public void setPosition(Position p);
+	
+	public void setDirection(int i);
+	
+	public int getDirection();
 }

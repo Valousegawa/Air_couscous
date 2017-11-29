@@ -27,4 +27,8 @@ public interface WriteService {
 	public void setSoundEffect(Sound.SOUND s);
 
 	public void addScore(int score);
+	
+	public void addBonusValue(int value);
+	
+	public void resetBonusValue();
 }

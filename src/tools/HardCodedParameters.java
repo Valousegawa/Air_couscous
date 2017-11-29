@@ -9,10 +9,10 @@ package tools;
 public class HardCodedParameters {
 	// ---HARD-CODED-PARAMETERS---//
 	public static String defaultParamFileName = "in.parameters";
-	public static final int defaultWidth = 800, defaultHeight = 600, heroesStartX = 80, heroesStartY = 200,
-			heroesWidth = 60, heroesHeight = 90, heroesStep = 10, phantomWidth = 30, phantomHeight = 30,
-			phantomStep = 10;
-	public static final int enginePaceMillis = 100, spriteSlowDownRate = 7;
+	public static final int defaultWidth = 800, defaultHeight = 600, heroesStartX = 20, heroesStartY = 500,
+			heroesWidth = 21, heroesHeight = 31, heroesStep = 20, ennemyWidth = 21, ennemyHeight = 31,
+			phantomStep = 10, bonusWidth = 10, bonusHeight = 20;
+	public static final int enginePaceMillis = 100, spriteSlowDownRate = 7, objectif = 30;
 	public static final double friction = 0.50;
 	public static final double resolutionShrinkFactor = 0.95, userBarShrinkFactor = 0.25, menuBarShrinkFactor = 0.5,
 			logBarShrinkFactor = 0.15, logBarCharacterShrinkFactor = 0.1175,
@@ -24,6 +24,12 @@ public class HardCodedParameters {
 	// ---MISCELLANOUS---//
 	public static final Object loadingLock = new Object();
 	public static final String greetingsZoneId = String.valueOf(0xED1C7E), simulatorZoneId = String.valueOf(0x51E77E);
+	public static final int Nbr_obstacle = 10;
+	public static final double[] allObstacleX = new double[Nbr_obstacle];
+	public static final double[] allObstacleY = new double[Nbr_obstacle];
+	
+	public static final double[] allObstacleWidth = new double[Nbr_obstacle];
+	public static final double[] allObstacleHeight = new double[Nbr_obstacle];
 
 	public static <T> T instantiate(final String className, final Class<T> type) {
 		try {

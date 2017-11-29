@@ -12,7 +12,7 @@ import specifications.ViewerService;
 import specifications.ReadService;
 import specifications.RequireReadService;
 import specifications.ElementService;
-
+import specifications.EngineService;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.effect.Lighting;
@@ -26,26 +26,25 @@ import javafx.scene.image.ImageView;
 import javafx.geometry.Rectangle2D;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class Viewer implements ViewerService, RequireReadService {
-	private static final int spriteSlowDownRate = HardCodedParameters.spriteSlowDownRate;
 	private static final double defaultMainWidth = HardCodedParameters.defaultWidth,
 			defaultMainHeight = HardCodedParameters.defaultHeight;
 	private ReadService data;
-	private ImageView heroesAvatar;
-	private Image heroesSpriteSheet;
-	private ArrayList<Rectangle2D> heroesAvatarViewports;
-	private ArrayList<Integer> heroesAvatarXModifiers;
-	private ArrayList<Integer> heroesAvatarYModifiers;
-	private int heroesAvatarViewportIndex;
-	private double xShrink, yShrink, shrink, xModifier, yModifier, heroesScale;
+	private EngineService engine;
+	private ImageView heroesAvatar, bonusAvatar, ennemyAvatar;
+	private Image heroesSpriteSheet, bonus, ennemySpriteSheet;
+	private ArrayList<Rectangle2D> heroesAvatarViewports, ennemyAvatarViewports;
+	private double xShrink, yShrink, shrink, xModifier, yModifier, heroesScale, ennemyScale;
 
 	public Viewer() {
 	}
 
 	@Override
-	public void bindReadService(ReadService service) {
+	public void bindReadService(ReadService service, EngineService engines) {
 		data = service;
+		engine = engines;
 	}
 
 	@Override
@@ -55,103 +54,116 @@ public class Viewer implements ViewerService, RequireReadService {
 		xModifier = 0;
 		yModifier = 0;
 
-		// Yucky hard-conding
-		heroesSpriteSheet = new Image("file:src/images/modern soldier large.png");
+		heroesSpriteSheet = new Image(engine.getSprite());
 		heroesAvatar = new ImageView(heroesSpriteSheet);
+		
+		ennemySpriteSheet = new Image("file:src/images/arab.png");
+		
+		bonus = new Image("file:src/images/AFI.png");
+		
 		heroesAvatarViewports = new ArrayList<Rectangle2D>();
-		heroesAvatarXModifiers = new ArrayList<Integer>();
-		heroesAvatarYModifiers = new ArrayList<Integer>();
 
-		heroesAvatarViewportIndex = 0;
-
-		// TODO: readapt with our sprites
-		heroesAvatarViewports.add(new Rectangle2D(570, 194, 115, 190));
-		heroesAvatarViewports.add(new Rectangle2D(398, 386, 133, 192));
-		heroesAvatarViewports.add(new Rectangle2D(155, 194, 147, 190));
-		heroesAvatarViewports.add(new Rectangle2D(785, 386, 127, 194));
-		heroesAvatarViewports.add(new Rectangle2D(127, 582, 135, 198));
-		heroesAvatarViewports.add(new Rectangle2D(264, 582, 111, 200));
-		heroesAvatarViewports.add(new Rectangle2D(2, 582, 123, 198));
-		heroesAvatarViewports.add(new Rectangle2D(533, 386, 115, 192));
-		// heroesAvatarViewports.add(new Rectangle2D(204,386,95,192));
-
-		// heroesAvatarXModifiers.add(10);heroesAvatarYModifiers.add(-7);
-		heroesAvatarXModifiers.add(6);
-		heroesAvatarYModifiers.add(-6);
-		heroesAvatarXModifiers.add(2);
-		heroesAvatarYModifiers.add(-8);
-		heroesAvatarXModifiers.add(1);
-		heroesAvatarYModifiers.add(-10);
-		heroesAvatarXModifiers.add(1);
-		heroesAvatarYModifiers.add(-13);
-		heroesAvatarXModifiers.add(5);
-		heroesAvatarYModifiers.add(-15);
-		heroesAvatarXModifiers.add(5);
-		heroesAvatarYModifiers.add(-13);
-		heroesAvatarXModifiers.add(0);
-		heroesAvatarYModifiers.add(-9);
-		heroesAvatarXModifiers.add(0);
-		heroesAvatarYModifiers.add(-6);
-		// heroesAvatarXModifiers.add(10);heroesAvatarYModifiers.add(-7);
-
+		heroesAvatarViewports.add(new Rectangle2D(4, 1, 25, 31));
+		heroesAvatarViewports.add(new Rectangle2D(35, 0, 27, 32));
+		heroesAvatarViewports.add(new Rectangle2D(68, 0, 25, 32));
+		heroesAvatarViewports.add(new Rectangle2D(5, 33, 127, 194));
+		heroesAvatarViewports.add(new Rectangle2D(37, 32, 22, 32));
+		heroesAvatarViewports.add(new Rectangle2D(69, 33, 22, 31));
+		heroesAvatarViewports.add(new Rectangle2D(5, 67, 22, 31));
+		heroesAvatarViewports.add(new Rectangle2D(37, 64, 22, 32));
+		heroesAvatarViewports.add(new Rectangle2D(69, 65, 22, 31));
+		heroesAvatarViewports.add(new Rectangle2D(5, 97, 22, 31));
+		heroesAvatarViewports.add(new Rectangle2D(37, 96, 23, 32));
+		heroesAvatarViewports.add(new Rectangle2D(69, 97, 23, 31));
+		
+		
+		ennemyAvatarViewports = new ArrayList<Rectangle2D>();
+		
+		ennemyAvatarViewports.add(new Rectangle2D(4, 1, 25, 31));
+		ennemyAvatarViewports.add(new Rectangle2D(35, 0, 27, 32));
+		ennemyAvatarViewports.add(new Rectangle2D(68, 0, 25, 32));
+		ennemyAvatarViewports.add(new Rectangle2D(5, 33, 127, 194));
+		ennemyAvatarViewports.add(new Rectangle2D(37, 32, 22, 32));
+		ennemyAvatarViewports.add(new Rectangle2D(69, 33, 22, 31));
+		ennemyAvatarViewports.add(new Rectangle2D(5, 67, 22, 31));
+		ennemyAvatarViewports.add(new Rectangle2D(37, 64, 22, 32));
+		ennemyAvatarViewports.add(new Rectangle2D(69, 65, 22, 31));
+		ennemyAvatarViewports.add(new Rectangle2D(5, 97, 22, 31));
+		ennemyAvatarViewports.add(new Rectangle2D(37, 96, 23, 32));
+		ennemyAvatarViewports.add(new Rectangle2D(69, 97, 23, 31));
 	}
 
-	//TODO: readapt to our project
 	@Override
 	public Parent getPanel() {
+		heroesSpriteSheet = new Image(engine.getSprite());
+		heroesAvatar = new ImageView(heroesSpriteSheet);
 		shrink = Math.min(xShrink, yShrink);
-		xModifier = .01 * shrink * defaultMainHeight;
+		xModifier = .01 * shrink * defaultMainWidth;
 		yModifier = .01 * shrink * defaultMainHeight;
 
-		// Yucky hard-conding
-		Rectangle map = new Rectangle(-2 * xModifier + shrink * defaultMainWidth,
-				-.2 * shrink * defaultMainHeight + shrink * defaultMainHeight);
-		map.setFill(Color.WHITE);
-		map.setStroke(Color.DIMGRAY);
-		map.setStrokeWidth(.01 * shrink * defaultMainHeight);
-		map.setArcWidth(.04 * shrink * defaultMainHeight);
-		map.setArcHeight(.04 * shrink * defaultMainHeight);
-		map.setTranslateX(xModifier);
-		map.setTranslateY(yModifier);
-
-		Text greets = new Text(-0.1 * shrink * defaultMainHeight + .5 * shrink * defaultMainWidth,
-				-0.1 * shrink * defaultMainWidth + shrink * defaultMainHeight, "Round 1");
-		greets.setFont(new Font(.05 * shrink * defaultMainHeight));
-
-		Text score = new Text(-0.1 * shrink * defaultMainHeight + .5 * shrink * defaultMainWidth,
-				-0.05 * shrink * defaultMainWidth + shrink * defaultMainHeight, "Score: " + data.getScore());
-		score.setFont(new Font(.05 * shrink * defaultMainHeight));
-
-		int index = heroesAvatarViewportIndex / spriteSlowDownRate;
-		heroesScale = data.getHeroesHeight() * shrink / heroesAvatarViewports.get(index).getHeight();
-		heroesAvatar.setViewport(heroesAvatarViewports.get(index));
+		heroesScale = data.getHeroesHeight() * shrink / heroesAvatarViewports.get(engine.getPressedDirection()).getHeight();
+		heroesAvatar.setViewport(heroesAvatarViewports.get(engine.getPressedDirection()));
 		heroesAvatar.setFitHeight(data.getHeroesHeight() * shrink);
 		heroesAvatar.setPreserveRatio(true);
 		heroesAvatar.setTranslateX(shrink * data.getHeroesPosition().x + shrink * xModifier
-				+ -heroesScale * 0.5 * heroesAvatarViewports.get(index).getWidth()
-				+ shrink * heroesScale * heroesAvatarXModifiers.get(index));
+				+ -heroesScale * 0.5 * heroesAvatarViewports.get(engine.getPressedDirection()).getWidth()
+				+ shrink * heroesScale);
 		heroesAvatar.setTranslateY(shrink * data.getHeroesPosition().y + shrink * yModifier
-				+ -heroesScale * 0.5 * heroesAvatarViewports.get(index).getHeight()
-				+ shrink * heroesScale * heroesAvatarYModifiers.get(index));
-		heroesAvatarViewportIndex = (heroesAvatarViewportIndex + 1)
-				% (heroesAvatarViewports.size() * spriteSlowDownRate);
+				+ -heroesScale * 0.5 * heroesAvatarViewports.get(engine.getPressedDirection()).getHeight()
+				+ shrink * heroesScale);
+		
+		Text score = new Text(-0.1 * shrink * defaultMainHeight + .5 * shrink * defaultMainWidth,
+				-0.1 * shrink * defaultMainWidth + shrink * defaultMainHeight, "Score : " + data.getScore());
+		score.setFont(new Font(.05 * shrink * defaultMainHeight));
+
+		Text textBonus = new Text(-0.1 * shrink * defaultMainHeight + .5 * shrink * defaultMainWidth,
+				-0.05 * shrink * defaultMainWidth + shrink * defaultMainHeight, "bonus: " + data.getBonusValue());
+		textBonus.setFont(new Font(.05 * shrink * defaultMainHeight));
+		
+		Text timer = new Text(-0.1 * shrink * defaultMainHeight + .5 * shrink * defaultMainWidth,
+				-0.01 * shrink * defaultMainWidth + shrink * defaultMainHeight, String.format("%d:%d", 
+					    TimeUnit.MILLISECONDS.toMinutes((long) engine.getTimer()),
+					    TimeUnit.MILLISECONDS.toSeconds((long) engine.getTimer()) - 
+					    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes((long) engine.getTimer()))
+					));
+		textBonus.setFont(new Font(.05 * shrink * defaultMainHeight));
 
 		Group panel = new Group();
-		panel.getChildren().addAll(map, greets, score, heroesAvatar);
+		panel.getChildren().addAll(heroesAvatar, score, textBonus, timer);
 
-		ArrayList<ElementService> phantoms = data.getEnnemies();
-		ElementService p;
+		ArrayList<ElementService> bonuses = data.getBonus();
+		ElementService b;
 
-		for (int i = 0; i < phantoms.size(); i++) {
-			p = phantoms.get(i);
-			double radius = .5 * Math.min(shrink * data.getEnnemyWidth(), shrink * data.getEnnemyHeight());
-			Circle phantomAvatar = new Circle(radius, Color.rgb(255, 156, 156));
-			phantomAvatar.setEffect(new Lighting());
-			phantomAvatar.setTranslateX(shrink * p.getPosition().x + shrink * xModifier - radius);
-			phantomAvatar.setTranslateY(shrink * p.getPosition().y + shrink * yModifier - radius);
-			panel.getChildren().add(phantomAvatar);
+		for (int i = 0; i < bonuses.size(); i++) {
+			b = bonuses.get(i);
+			double radius = .5 * Math.min(shrink * data.getBonusWidth(), shrink * data.getBonusHeight());
+			bonusAvatar = new ImageView(bonus);
+			bonusAvatar.setEffect(new Lighting());
+			bonusAvatar.setPreserveRatio(true);
+			bonusAvatar.setFitHeight(data.getBonusHeight() * shrink);
+			bonusAvatar.setTranslateX(shrink * b.getPosition().x + shrink * xModifier - radius);
+			bonusAvatar.setTranslateY(shrink * b.getPosition().y + shrink * yModifier - radius);
+			panel.getChildren().add(bonusAvatar);
 		}
-
+		
+		ArrayList<ElementService> ennemies = data.getEnnemies();
+		ElementService e;
+		
+		for (int i = 0; i < ennemies.size(); i++) {
+			e = ennemies.get(i);
+			ennemyAvatar = new ImageView(ennemySpriteSheet);
+			ennemyScale = data.getEnnemyHeight() * shrink / ennemyAvatarViewports.get(e.getDirection()).getHeight();
+			ennemyAvatar.setViewport(ennemyAvatarViewports.get(e.getDirection()));
+			ennemyAvatar.setFitHeight(data.getEnnemyHeight() * shrink);
+			ennemyAvatar.setPreserveRatio(true);
+			ennemyAvatar.setTranslateX(shrink * e.getPosition().x + shrink * xModifier
+					+ -ennemyScale * 0.5 * ennemyAvatarViewports.get(e.getDirection()).getWidth()
+					+ shrink * ennemyScale);
+			ennemyAvatar.setTranslateY(shrink * e.getPosition().y + shrink * yModifier
+					+ -ennemyScale * 0.5 * ennemyAvatarViewports.get(e.getDirection()).getHeight()
+					+ shrink * ennemyScale);
+			panel.getChildren().add(ennemyAvatar);
+		}
 		return panel;
 	}
 

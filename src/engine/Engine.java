@@ -54,7 +54,7 @@ public class Engine implements EngineService, RequireDataService {
 		engineClock.schedule(new TimerTask() {
 			public void run() {
 
-				if (gen.nextInt(10) < 3) {
+				/*if (gen.nextInt(10) < 3) {
 					spawnEnnemies();
 				}
 				
@@ -92,7 +92,7 @@ public class Engine implements EngineService, RequireDataService {
 
 				data.setBonus(ennemies);
 
-				data.setStepNumber(data.getStepNumber() + 1);
+				data.setStepNumber(data.getStepNumber() + 1);*/
 			}
 		}, 0, HardCodedParameters.enginePaceMillis);
 	}

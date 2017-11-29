@@ -6,17 +6,10 @@
  * ******************************************************/
 package engine;
 
-import tools.HardCodedParameters;
-import tools.Obstacle;
-import tools.User;
-import tools.Position;
-import tools.Sound;
-
-import specifications.EngineService;
-import specifications.DataService;
-import specifications.RequireDataService;
-import specifications.ElementService;
-
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -27,15 +20,18 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.DataLine;
 
 import javafx.animation.AnimationTimer;
-
-import java.util.Random;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
+import specifications.DataService;
+import specifications.ElementService;
+import specifications.EngineService;
+import specifications.RequireDataService;
+import tools.HardCodedParameters;
+import tools.Obstacle;
+import tools.Position;
+import tools.Sound;
+import tools.User;
 
 public class Engine implements EngineService, RequireDataService {
-	private static final double friction = HardCodedParameters.friction, heroesStep = HardCodedParameters.heroesStep,
-			phantomStep = HardCodedParameters.phantomStep;
+	private static final double heroesStep = HardCodedParameters.heroesStep;
 	private Timer engineClock;
 	private DataService data;
 	private User.COMMAND command;
@@ -86,6 +82,8 @@ public class Engine implements EngineService, RequireDataService {
 							spawnBonus();
 						}
 					}
+
+					updatePositionHeroes();
 
 					if (data.getEnnemies().size() < 3) {
 						spawnEnnemy();
@@ -156,6 +154,7 @@ public class Engine implements EngineService, RequireDataService {
 					timer -= 100;
 					data.setSoundEffect(Sound.SOUND.None);
 				}
+				data.setStepNumber(data.getStepNumber() + 1);
 			}
 		}, 0, HardCodedParameters.enginePaceMillis);
 	}
@@ -555,7 +554,7 @@ public class Engine implements EngineService, RequireDataService {
 		}
 		return false;
 	}
-	
+
 	public synchronized void playItemSound() throws FileNotFoundException {
 		new Thread(new Runnable() {
 			public void run() {
@@ -578,7 +577,7 @@ public class Engine implements EngineService, RequireDataService {
 			}
 		}).start();
 	}
-	
+
 	public synchronized void playCaptureSound() throws FileNotFoundException {
 		new Thread(new Runnable() {
 			public void run() {

@@ -6,37 +6,52 @@
  * ******************************************************/
 package userInterface;
 
-import tools.HardCodedParameters;
+import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
-import specifications.ViewerService;
-import specifications.ReadService;
-import specifications.RequireReadService;
-import specifications.ElementService;
-import specifications.EngineService;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.effect.Lighting;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
-import javafx.scene.text.Font;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.geometry.Rectangle2D;
-
-import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import specifications.ElementService;
+import specifications.EngineService;
+import specifications.ReadService;
+import specifications.RequireReadService;
+import specifications.ViewerService;
+import tools.HardCodedParameters;
 
 public class Viewer implements ViewerService, RequireReadService {
 	private static final double defaultMainWidth = HardCodedParameters.defaultWidth,
 			defaultMainHeight = HardCodedParameters.defaultHeight;
+	private static final double mapWidth = HardCodedParameters.mapWidth, mapHeight = HardCodedParameters.mapHeight,
+			mapPositionX = HardCodedParameters.mapPositionX, mapPositionY = HardCodedParameters.mapPositionY;
+	private static final double barSepWidth = HardCodedParameters.barSepWidth,
+			barSepHeight = HardCodedParameters.barSepHeight, sepPositionX = HardCodedParameters.sepPositionX,
+			sepPositionY = HardCodedParameters.sepPositionY;
+	private static final double jailWidth = HardCodedParameters.jailWidth, jailHeight = HardCodedParameters.jailHeight,
+			jailPositionX = HardCodedParameters.jailPositionX, jailPositionY = HardCodedParameters.jailPositionY;
+	private static final double objectifWidth = HardCodedParameters.objectifWidth,
+			objectifHeight = HardCodedParameters.objectifHeight, scoreWidth = HardCodedParameters.scoreWidth,
+			scoreHeight = HardCodedParameters.scoreHeight, timeWidth = HardCodedParameters.timeWidth,
+			timeHeight = HardCodedParameters.timeHeight;
+	private static final double powerWidth = HardCodedParameters.powerWidth,
+			powerHeight = HardCodedParameters.powerHeight, powerPositionX = HardCodedParameters.powerPositionX,
+			powerPositionY = HardCodedParameters.powerPositionY;
 	private ReadService data;
 	private EngineService engine;
 	private ImageView heroesAvatar, bonusAvatar, ennemyAvatar;
 	private Image heroesSpriteSheet, bonus, ennemySpriteSheet;
 	private ArrayList<Rectangle2D> heroesAvatarViewports, ennemyAvatarViewports;
 	private double xShrink, yShrink, shrink, xModifier, yModifier, heroesScale, ennemyScale;
+
+	private String path;
 
 	public Viewer() {
 	}
@@ -95,6 +110,99 @@ public class Viewer implements ViewerService, RequireReadService {
 
 	@Override
 	public Parent getPanel() {
+		Group panel = new Group();
+		
+		// Path for power progess bar
+		switch (data.getBonusValue()) {
+		case 0:
+			path = "power.png";
+			break;
+		case 10:
+			path = "power10.png";
+			break;
+		case 20:
+			path = "power20.png";
+			break;
+		case 30:
+			path = "power30.png";
+			break;
+		case 40:
+			path = "power40.png";
+			break;
+		case 50:
+			path = "power50.png";
+			break;
+		case 60:
+			path = "power60.png";
+			break;
+		case 70:
+			path = "power70.png";
+			break;
+		case 80:
+			path = "power80.png";
+			break;
+		case 90:
+			path = "power90.png";
+			break;
+		case 100:
+			path = "power100.png";
+			break;
+		}
+
+		// Map
+		Rectangle map = new Rectangle(-2 * xModifier + shrink * mapWidth,
+				-.2 * shrink * mapHeight + shrink * mapHeight);
+		Image imgBackground = new Image("/images/map.png");
+		map.setFill(new ImagePattern(imgBackground));
+		map.setX(mapPositionX);
+		map.setY(mapPositionY);
+		map.setStroke(Color.rgb(240, 235, 230));
+		map.setStrokeWidth(.01 * shrink * defaultMainHeight);
+		map.setArcWidth(.04 * shrink * defaultMainHeight);
+		map.setArcHeight(.04 * shrink * defaultMainHeight);
+		map.setTranslateX(xModifier);
+		map.setTranslateY(yModifier);
+
+		// Separation bar
+		Rectangle bar = new Rectangle(13 * shrink * powerPositionY + .5 * shrink * powerPositionX,
+				-0.05 * shrink * powerPositionX + shrink * powerPositionY, -2 * xModifier + shrink * barSepWidth,
+				-.2 * shrink * barSepHeight + shrink * barSepHeight);
+		Image imgBar = new Image("/images/bar.png");
+		bar.setFill(new ImagePattern(imgBar));
+		bar.setTranslateX(xModifier + sepPositionX * xShrink);
+		bar.setTranslateY(yModifier + sepPositionY * yShrink);
+
+		// Jail
+		Rectangle jail = new Rectangle(7.2 * shrink * jailPositionY + .5 * shrink * jailPositionX,
+				-0.05 * shrink * jailPositionX + shrink * jailPositionY, -2 * xModifier + shrink * jailWidth,
+				-.2 * shrink * jailHeight + shrink * jailHeight);
+		Image Imagejail = new Image("/images/prison.png");
+		jail.setFill(new ImagePattern(Imagejail));
+		jail.setTranslateX(xModifier + jailPositionX * xShrink);
+		jail.setTranslateY(yModifier + jailPositionY * yShrink);
+
+		// Power
+		Rectangle power = new Rectangle(-2 * xModifier + shrink * powerWidth,
+				-.2 * shrink * powerHeight + shrink * powerHeight);
+		Image ImagePower = new Image("/images/" + path);
+		power.setFill(new ImagePattern(ImagePower));
+		power.setX(powerPositionX);
+		power.setY(powerPositionY);
+		power.setTranslateX(xModifier + powerPositionX * xShrink);
+		power.setTranslateY(yModifier + powerPositionY * yShrink);
+
+		// Objectifs
+		Text objectif = new Text(10.3 * shrink * objectifHeight + .5 * shrink * objectifWidth,
+				-0.05 * shrink * objectifWidth + shrink * objectifHeight, "Objectif");
+		objectif.setFont(new Font(.2 * shrink * objectifHeight));
+
+		// Score
+		Text score = new Text(10.3 * shrink * scoreHeight + .5 * shrink * scoreWidth,
+				-0.05 * shrink * scoreWidth + shrink * scoreHeight, "Score " + data.getScore());
+		score.setFont(new Font(.2 * shrink * scoreHeight));
+		
+		panel.getChildren().addAll(map, bar, jail, score, objectif, power);
+		
 		heroesSpriteSheet = new Image(engine.getSprite());
 		heroesAvatar = new ImageView(heroesSpriteSheet);
 		shrink = Math.min(xShrink, yShrink);
@@ -112,10 +220,6 @@ public class Viewer implements ViewerService, RequireReadService {
 				+ -heroesScale * 0.5 * heroesAvatarViewports.get(engine.getPressedDirection()).getHeight()
 				+ shrink * heroesScale);
 		
-		Text score = new Text(-0.1 * shrink * defaultMainHeight + .5 * shrink * defaultMainWidth,
-				-0.1 * shrink * defaultMainWidth + shrink * defaultMainHeight, "Score : " + data.getScore());
-		score.setFont(new Font(.05 * shrink * defaultMainHeight));
-
 		Text textBonus = new Text(-0.1 * shrink * defaultMainHeight + .5 * shrink * defaultMainWidth,
 				-0.05 * shrink * defaultMainWidth + shrink * defaultMainHeight, "bonus: " + data.getBonusValue());
 		textBonus.setFont(new Font(.05 * shrink * defaultMainHeight));
@@ -127,9 +231,6 @@ public class Viewer implements ViewerService, RequireReadService {
 					    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes((long) engine.getTimer()))
 					));
 		textBonus.setFont(new Font(.05 * shrink * defaultMainHeight));
-
-		Group panel = new Group();
-		panel.getChildren().addAll(heroesAvatar, score, textBonus, timer);
 
 		ArrayList<ElementService> bonuses = data.getBonus();
 		ElementService b;
@@ -164,6 +265,8 @@ public class Viewer implements ViewerService, RequireReadService {
 					+ shrink * ennemyScale);
 			panel.getChildren().add(ennemyAvatar);
 		}
+		
+		panel.getChildren().addAll(heroesAvatar, textBonus, timer);
 		return panel;
 	}
 

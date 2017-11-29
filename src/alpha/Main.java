@@ -67,7 +67,7 @@ public class Main extends Application {
 	public void start(Stage stage) {
 		final Scene scene = new Scene(((Viewer) viewer).getPanel());
 
-		scene.setFill(Color.CORNFLOWERBLUE);
+		scene.setFill(Color.rgb(240, 235, 230));
 		scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent event) {
@@ -114,7 +114,7 @@ public class Main extends Application {
 		});
 
 		stage.setScene(scene);
-		stage.setWidth(HardCodedParameters.defaultWidth);
+		stage.setWidth(HardCodedParameters.maxWidth);
 		stage.setHeight(HardCodedParameters.defaultHeight);
 		stage.setOnShown(new EventHandler<WindowEvent>() {
 			@Override

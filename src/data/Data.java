@@ -6,17 +6,15 @@
  * ******************************************************/
 package data;
 
+import java.util.ArrayList;
+
+import data.ia.MoveEnnemies;
+import specifications.DataService;
+import specifications.ElementService;
 import tools.HardCodedParameters;
 import tools.Obstacle;
 import tools.Position;
 import tools.Sound;
-
-import specifications.DataService;
-import specifications.ElementService;
-
-import data.ia.MoveEnnemies;
-
-import java.util.ArrayList;
 
 public class Data implements DataService {
 	private Position heroesPosition;
@@ -39,7 +37,7 @@ public class Data implements DataService {
 		
 		stepNumber = 0;
 		score = 0;
-		bonus_value = 90;
+		bonus_value = 0;
 		heroesWidth = HardCodedParameters.heroesWidth;
 		heroesHeight = HardCodedParameters.heroesHeight;
 		ennemyWidth = HardCodedParameters.ennemyWidth;

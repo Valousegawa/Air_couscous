@@ -44,6 +44,7 @@ public class Engine implements EngineService, RequireDataService {
 	private int bonusTimer;
 	private String sprite;
 	private double timer;
+	private int winLose = -1;
 
 	public Engine() {
 	}
@@ -548,9 +549,11 @@ public class Engine implements EngineService, RequireDataService {
 	@Override
 	public boolean gameState() {
 		if (data.getScore() == HardCodedParameters.objectif && timer != 0) {
+			winLose = 1;
 			return true;
 		} else if (data.getScore() != HardCodedParameters.objectif && timer == 0) {
-			return false;
+			winLose = 0;
+			return true;
 		}
 		return false;
 	}
@@ -622,6 +625,11 @@ public class Engine implements EngineService, RequireDataService {
 				}
 			}
 		}).start();
+	}
+
+	@Override
+	public int getWinLose() {
+		return winLose;
 	}
 
 }

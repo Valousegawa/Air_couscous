@@ -44,6 +44,7 @@ public class Engine implements EngineService, RequireDataService {
 	private int bonusTimer;
 	private String sprite;
 	private double timer;
+	private int winLose = -1;
 
 	public Engine() {
 	}
@@ -72,13 +73,16 @@ public class Engine implements EngineService, RequireDataService {
 
 	@Override
 	public void start() {
+		try {
+			playMusic();
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		}
 		engineClock.schedule(new TimerTask() {
 			public void run() {
 				if (!gameState()) {
-					updatePositionHeroes();
-
 					if (data.getBonus().size() < 1 && data.getBonusValue() < 100) {
-						if (gen.nextInt(10) < 10) {
+						if (gen.nextInt(10) < 2) {
 							spawnBonus();
 						}
 					}
@@ -92,24 +96,24 @@ public class Engine implements EngineService, RequireDataService {
 					for (ElementService p : data.getEnnemies()) {
 						if (!ennemyStunned) {
 							if (p.getAction() == ElementService.MOVE.LEFT) {
-								// if (!ennemyCollisonObstacle(p)) {
-								moveLeft(p);
-								// }
+								if (!ennemyCollisonObstacle(p, 4)) {
+									moveLeft(p);
+								}
 							}
 							if (p.getAction() == ElementService.MOVE.RIGHT) {
-								// if (!ennemyCollisonObstacle(p)) {
-								moveRight(p);
-								// }
+								if (!ennemyCollisonObstacle(p, 3)) {
+									moveRight(p);
+								}
 							}
 							if (p.getAction() == ElementService.MOVE.UP) {
-								// if (!ennemyCollisonObstacle(p)) {
-								moveUp(p);
-								// }
+								if (!ennemyCollisonObstacle(p, 2)) {
+									moveUp(p);
+								}
 							}
 							if (p.getAction() == ElementService.MOVE.DOWN) {
-								// if (!ennemyCollisonObstacle(p)) {
-								moveDown(p);
-								// }
+								if (!ennemyCollisonObstacle(p, 1)) {
+									moveDown(p);
+								}
 							}
 						}
 
@@ -208,16 +212,23 @@ public class Engine implements EngineService, RequireDataService {
 		}
 	}
 
-	// TODO
 	private void updatePositionHeroes() {
 		if (moveDown) {
-			moveHeroeDown(data);
+			if (!heroCollisonObstacle(1)) {
+				moveHeroeDown(data);
+			}
 		} else if (moveUp) {
-			moveHeroeUp(data);
+			if (!heroCollisonObstacle(2)) {
+				moveHeroeUp(data);
+			}
 		} else if (moveRight) {
-			moveHeroeRight(data);
+			if (!heroCollisonObstacle(3)) {
+				moveHeroeRight(data);
+			}
 		} else if (moveLeft) {
-			moveHeroeLeft(data);
+			if (!heroCollisonObstacle(4)) {
+				moveHeroeLeft(data);
+			}
 		}
 	}
 
@@ -233,8 +244,13 @@ public class Engine implements EngineService, RequireDataService {
 
 			cont = false;
 			for (ElementService p : data.getBonus()) {
-				if (p.getPosition().equals(new Position(x, y)))
+				if (p.getPosition().equals(new Position(x, y))) {
 					cont = true;
+				}
+			}
+			if (y > HardCodedParameters.mapHeight - 100 || y < HardCodedParameters.mapPositionY + 50
+					|| x > HardCodedParameters.mapWidth - 50 || x < HardCodedParameters.mapPositionX + 50) {
+				cont = true;
 			}
 		}
 		data.addBonus(new Position(x, y));
@@ -251,9 +267,14 @@ public class Engine implements EngineService, RequireDataService {
 					+ HardCodedParameters.defaultWidth * .1);
 
 			cont = false;
-			for (ElementService p : data.getBonus()) {
-				if (p.getPosition().equals(new Position(x, y)))
+			for (ElementService p : data.getEnnemies()) {
+				if (p.getPosition().equals(new Position(x, y))) {
 					cont = true;
+				}
+			}
+			if (y > HardCodedParameters.mapHeight - 100 || y < HardCodedParameters.mapPositionY + 50
+					|| x > HardCodedParameters.mapWidth - 50 || x < HardCodedParameters.mapPositionX + 50) {
+				cont = true;
 			}
 		}
 		data.addEnnemy(new Position(x, y));
@@ -486,21 +507,73 @@ public class Engine implements EngineService, RequireDataService {
 		}.start();
 	}
 
-	private boolean ennemyCollisonObstacle(ElementService p) {
-		for (Obstacle o : data.getObstacles()) {
-			if (p.getPosition().x + heroesStep >= o.getPosition().x - o.getWidth() / 2
-					|| p.getPosition().x + heroesStep <= o.getPosition().x + o.getWidth() / 2
-					|| p.getPosition().y + heroesStep >= o.getPosition().y - o.getHeight() / 2
-					|| p.getPosition().y + heroesStep <= o.getPosition().y + o.getHeight() / 2) {
+	private boolean ennemyCollisonObstacle(ElementService p, int dir) {
+		switch (dir) {
+		case 1:
+			if (p.getPosition().y + heroesStep < HardCodedParameters.mapHeight - 100) {
+				return false;
+			} else {
 				return true;
 			}
-			return false;
+		case 2:
+			if (p.getPosition().y - heroesStep > HardCodedParameters.mapPositionY + 50) {
+				return false;
+			} else {
+				return true;
+			}
+		case 3:
+			if (p.getPosition().x + heroesStep < HardCodedParameters.mapWidth - 50) {
+				return false;
+			} else {
+				return true;
+			}
+		case 4:
+			if (p.getPosition().x - heroesStep > HardCodedParameters.mapPositionX + 50) {
+				return false;
+			} else {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean heroCollisonObstacle(int dir) {
+		switch (dir) {
+		case 1:
+			if (data.getHeroesPosition().y + heroesStep < HardCodedParameters.mapHeight - 100) {
+				return false;
+			} else {
+				return true;
+			}
+		case 2:
+			if (data.getHeroesPosition().y - heroesStep > HardCodedParameters.mapPositionY + 50) {
+				return false;
+			} else {
+				return true;
+			}
+		case 3:
+			if (data.getHeroesPosition().x + heroesStep < HardCodedParameters.mapWidth - 50) {
+				return false;
+			} else {
+				return true;
+			}
+		case 4:
+			if (data.getHeroesPosition().x - heroesStep > HardCodedParameters.mapPositionX + 50) {
+				return false;
+			} else {
+				return true;
+			}
 		}
 		return false;
 	}
 
 	@Override
 	public void bonus_activated() {
+		try {
+			playBonusSound();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 		switch (data.getBonusValue()) {
 		case 30:
 		case 40:
@@ -548,9 +621,11 @@ public class Engine implements EngineService, RequireDataService {
 	@Override
 	public boolean gameState() {
 		if (data.getScore() == HardCodedParameters.objectif && timer != 0) {
+			winLose = 1;
 			return true;
 		} else if (data.getScore() != HardCodedParameters.objectif && timer == 0) {
-			return false;
+			winLose = 0;
+			return true;
 		}
 		return false;
 	}
@@ -600,12 +675,12 @@ public class Engine implements EngineService, RequireDataService {
 			}
 		}).start();
 	}
-
-	public synchronized void playMusic() throws FileNotFoundException {
+	
+	public synchronized void playBonusSound() throws FileNotFoundException {
 		new Thread(new Runnable() {
 			public void run() {
 				try {
-					File yourFile = new File("src/sfx/music.wav");
+					File yourFile = new File("src/sound/bonus3.wav");
 					AudioInputStream stream;
 					AudioFormat format;
 					DataLine.Info info;
@@ -622,6 +697,36 @@ public class Engine implements EngineService, RequireDataService {
 				}
 			}
 		}).start();
+	}
+	
+	public synchronized void playMusic() throws FileNotFoundException {
+		new Thread(new Runnable() {
+			public void run() {
+				try {
+					File yourFile = new File("src/sound/music.wav");
+					AudioInputStream stream;
+					AudioFormat format;
+					DataLine.Info info;
+					Clip clip;
+
+					stream = AudioSystem.getAudioInputStream(yourFile);
+					format = stream.getFormat();
+					info = new DataLine.Info(Clip.class, format);
+					clip = (Clip) AudioSystem.getLine(info);
+					clip.open(stream);
+					clip.loop(Clip.LOOP_CONTINUOUSLY);
+			        Thread.sleep(10000);
+					clip.start();
+				} catch (Exception e) {
+					System.err.println(e.getMessage());
+				}
+			}
+		}).start();
+	}
+
+	@Override
+	public int getWinLose() {
+		return winLose;
 	}
 
 }

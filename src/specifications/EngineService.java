@@ -28,4 +28,6 @@ public interface EngineService {
 	double getTimer();
 	
 	boolean gameState();
+	
+	int getWinLose();
 }

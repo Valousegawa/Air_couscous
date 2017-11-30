@@ -6,34 +6,28 @@
  * ******************************************************/
 package alpha;
 
-import tools.HardCodedParameters;
-import tools.User;
-import tools.Sound;
-
-import specifications.DataService;
-import specifications.EngineService;
-import specifications.ViewerService;
-import specifications.AlgorithmService;
-
 import data.Data;
 import engine.Engine;
-import userInterface.Viewer;
-//import algorithm.RandomWalker;
-
-import javafx.application.Application;
-import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
-import javafx.event.EventHandler;
 import javafx.animation.AnimationTimer;
+import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.paint.Color;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
+import specifications.DataService;
+import specifications.EngineService;
+import specifications.ViewerService;
+import tools.HardCodedParameters;
+import tools.User;
+import userInterface.Viewer;
+//import algorithm.RandomWalker;
 
 public class Main extends Application {
 	// ---HARD-CODED-PARAMETERS---//
@@ -134,17 +128,7 @@ public class Main extends Application {
 			@Override
 			public void handle(long l) {
 				scene.setRoot(((Viewer) viewer).getPanel());
-				System.out.println(data.getSoundEffect());
 				switch (data.getSoundEffect()) {
-				case bonus1:
-					new MediaPlayer(new Media(getHostServices().getDocumentBase() + "src/sound/bonus3.mp3")).play();
-					break;
-				case bonus2:
-					new MediaPlayer(new Media(getHostServices().getDocumentBase() + "src/sound/bonus3.mp3")).play();
-					break;
-				case bonus3:
-					new MediaPlayer(new Media(getHostServices().getDocumentBase() + "src/sound/bonus3.mp3")).play();
-					break;
 				default:
 					break;
 				}

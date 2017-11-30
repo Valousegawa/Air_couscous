@@ -44,6 +44,12 @@ public class Viewer implements ViewerService, RequireReadService {
 	private static final double powerWidth = HardCodedParameters.powerWidth,
 			powerHeight = HardCodedParameters.powerHeight, powerPositionX = HardCodedParameters.powerPositionX,
 			powerPositionY = HardCodedParameters.powerPositionY;
+	private static final double winWidth = HardCodedParameters.winWidth, winHeight = HardCodedParameters.winHeight,
+			winPositionX = HardCodedParameters.winPositionX, winPositionY = HardCodedParameters.winPositionY;
+	private static final double gameOverWidth = HardCodedParameters.gameOverWidth,
+			gameOverHeight = HardCodedParameters.gameOverHeight,
+			gameOverPositinX = HardCodedParameters.gameOverPositinX,
+			gameOverPositinY = HardCodedParameters.gameOverPositionY;
 	private ReadService data;
 	private EngineService engine;
 	private ImageView heroesAvatar, bonusAvatar, ennemyAvatar;
@@ -52,6 +58,8 @@ public class Viewer implements ViewerService, RequireReadService {
 	private double xShrink, yShrink, shrink, xModifier, yModifier, heroesScale, ennemyScale;
 
 	private String path;
+
+	private double scoreGameX, scoreGameY, scoreEndX, scoreEndY, bonusGameX, bonusGameY, bonusEndX, bonusEndY;
 
 	public Viewer() {
 	}
@@ -71,11 +79,11 @@ public class Viewer implements ViewerService, RequireReadService {
 
 		heroesSpriteSheet = new Image(engine.getSprite());
 		heroesAvatar = new ImageView(heroesSpriteSheet);
-		
+
 		ennemySpriteSheet = new Image("file:src/images/arab.png");
-		
+
 		bonus = new Image("file:src/images/AFI.png");
-		
+
 		heroesAvatarViewports = new ArrayList<Rectangle2D>();
 
 		heroesAvatarViewports.add(new Rectangle2D(4, 1, 25, 31));
@@ -90,10 +98,9 @@ public class Viewer implements ViewerService, RequireReadService {
 		heroesAvatarViewports.add(new Rectangle2D(5, 97, 22, 31));
 		heroesAvatarViewports.add(new Rectangle2D(37, 96, 23, 32));
 		heroesAvatarViewports.add(new Rectangle2D(69, 97, 23, 31));
-		
-		
+
 		ennemyAvatarViewports = new ArrayList<Rectangle2D>();
-		
+
 		ennemyAvatarViewports.add(new Rectangle2D(4, 1, 25, 31));
 		ennemyAvatarViewports.add(new Rectangle2D(35, 0, 27, 32));
 		ennemyAvatarViewports.add(new Rectangle2D(68, 0, 25, 32));
@@ -111,7 +118,16 @@ public class Viewer implements ViewerService, RequireReadService {
 	@Override
 	public Parent getPanel() {
 		Group panel = new Group();
-		
+
+		bonusGameX = 10.2 * shrink * objectifHeight + .5 * shrink * objectifWidth;
+		bonusGameY = 0.1 * shrink * objectifWidth + shrink * objectifHeight;
+		bonusEndX = 11 * shrink * scoreHeight + .5 * shrink * scoreWidth;
+		bonusEndY = 2.5 * shrink * scoreWidth + shrink * scoreHeight;
+		scoreGameX = 10.3 * shrink * scoreHeight + .5 * shrink * scoreWidth;
+		scoreGameY = 0.1 * shrink * objectifWidth + shrink * objectifHeight;
+		scoreEndX = 11 * shrink * scoreHeight + .5 * shrink * scoreWidth;
+		scoreEndY = 1 * shrink * scoreWidth + shrink * scoreHeight;
+
 		// Path for power progess bar
 		switch (data.getBonusValue()) {
 		case 0:
@@ -192,24 +208,27 @@ public class Viewer implements ViewerService, RequireReadService {
 		power.setTranslateY(yModifier + powerPositionY * yShrink);
 
 		// Objectifs
-		Text objectif = new Text(10.3 * shrink * objectifHeight + .5 * shrink * objectifWidth,
-				-0.05 * shrink * objectifWidth + shrink * objectifHeight, "Objectif");
-		objectif.setFont(new Font(.2 * shrink * objectifHeight));
+		Text objectif = new Text(bonusGameX, bonusGameY, "bonus: " + data.getBonusValue());
+		objectif.setFont(new Font(.03 * shrink * defaultMainHeight));
+
+		Text objectifEnd = new Text(bonusEndX, bonusEndY, "bonus: " + data.getBonusValue());
+		objectif.setFont(new Font(.03 * shrink * defaultMainHeight));
 
 		// Score
-		Text score = new Text(10.3 * shrink * scoreHeight + .5 * shrink * scoreWidth,
-				-0.05 * shrink * scoreWidth + shrink * scoreHeight, "Score " + data.getScore());
-		score.setFont(new Font(.2 * shrink * scoreHeight));
-		
-		panel.getChildren().addAll(map, bar, jail, score, objectif, power);
-		
+		Text score = new Text(scoreGameX, scoreGameY, "Score " + data.getScore());
+		score.setFont(new Font(.03 * shrink * defaultMainHeight));
+
+		Text scoreEnd = new Text(scoreEndX, scoreEndY, "Score " + data.getScore());
+		score.setFont(new Font(.03 * shrink * defaultMainHeight));
+
 		heroesSpriteSheet = new Image(engine.getSprite());
 		heroesAvatar = new ImageView(heroesSpriteSheet);
 		shrink = Math.min(xShrink, yShrink);
 		xModifier = .01 * shrink * defaultMainWidth;
 		yModifier = .01 * shrink * defaultMainHeight;
 
-		heroesScale = data.getHeroesHeight() * shrink / heroesAvatarViewports.get(engine.getPressedDirection()).getHeight();
+		heroesScale = data.getHeroesHeight() * shrink
+				/ heroesAvatarViewports.get(engine.getPressedDirection()).getHeight();
 		heroesAvatar.setViewport(heroesAvatarViewports.get(engine.getPressedDirection()));
 		heroesAvatar.setFitHeight(data.getHeroesHeight() * shrink);
 		heroesAvatar.setPreserveRatio(true);
@@ -219,18 +238,46 @@ public class Viewer implements ViewerService, RequireReadService {
 		heroesAvatar.setTranslateY(shrink * data.getHeroesPosition().y + shrink * yModifier
 				+ -heroesScale * 0.5 * heroesAvatarViewports.get(engine.getPressedDirection()).getHeight()
 				+ shrink * heroesScale);
-		
-		Text textBonus = new Text(-0.1 * shrink * defaultMainHeight + .5 * shrink * defaultMainWidth,
-				-0.05 * shrink * defaultMainWidth + shrink * defaultMainHeight, "bonus: " + data.getBonusValue());
-		textBonus.setFont(new Font(.05 * shrink * defaultMainHeight));
-		
-		Text timer = new Text(-0.1 * shrink * defaultMainHeight + .5 * shrink * defaultMainWidth,
-				-0.01 * shrink * defaultMainWidth + shrink * defaultMainHeight, String.format("%d:%d", 
-					    TimeUnit.MILLISECONDS.toMinutes((long) engine.getTimer()),
-					    TimeUnit.MILLISECONDS.toSeconds((long) engine.getTimer()) - 
-					    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes((long) engine.getTimer()))
-					));
-		textBonus.setFont(new Font(.05 * shrink * defaultMainHeight));
+
+		Text timer = new Text(11 * shrink * scoreHeight + .5 * shrink * scoreWidth,
+				4 * shrink * scoreWidth + shrink * scoreHeight,
+				String.format("%d:%d", TimeUnit.MILLISECONDS.toMinutes((long) engine.getTimer()),
+						TimeUnit.MILLISECONDS.toSeconds((long) engine.getTimer()) - TimeUnit.MINUTES
+								.toSeconds(TimeUnit.MILLISECONDS.toMinutes((long) engine.getTimer()))));
+		timer.setFont(new Font(.03 * shrink * defaultMainHeight));
+
+		// Map win
+		Rectangle mapWin = new Rectangle(-2 * xModifier + shrink * winWidth,
+				-.2 * shrink * winHeight + shrink * winHeight);
+		Image imgWin = new Image("/images/win.png");
+		mapWin.setFill(new ImagePattern(imgWin));
+		mapWin.setX(winPositionX);
+		mapWin.setY(winPositionY);
+		mapWin.setTranslateX(xModifier);
+		mapWin.setTranslateY(yModifier);
+
+		// Map win
+		Rectangle mapGO = new Rectangle(-2 * xModifier + shrink * gameOverWidth,
+				-.2 * shrink * gameOverHeight + shrink * gameOverHeight);
+		Image imgGO = new Image("/images/gameOver.jpeg");
+		mapGO.setFill(new ImagePattern(imgGO));
+		mapGO.setX(gameOverPositinX);
+		mapGO.setY(gameOverPositinY);
+		mapGO.setTranslateX(xModifier);
+		mapGO.setTranslateY(yModifier);
+
+		if (!engine.gameState()) {
+			panel.getChildren().addAll(map, jail, bar, score, objectif, power);
+			panel.getChildren().addAll(heroesAvatar, timer);
+		} else {
+			panel.getChildren().clear();
+			panel.getChildren().addAll(scoreEnd, objectifEnd, timer);
+			if (engine.getWinLose() == 1) {
+				panel.getChildren().addAll(mapWin);
+			} else {
+				panel.getChildren().addAll(mapGO);
+			}
+		}
 
 		ArrayList<ElementService> bonuses = data.getBonus();
 		ElementService b;
@@ -244,12 +291,14 @@ public class Viewer implements ViewerService, RequireReadService {
 			bonusAvatar.setFitHeight(data.getBonusHeight() * shrink);
 			bonusAvatar.setTranslateX(shrink * b.getPosition().x + shrink * xModifier - radius);
 			bonusAvatar.setTranslateY(shrink * b.getPosition().y + shrink * yModifier - radius);
-			panel.getChildren().add(bonusAvatar);
+			if (!engine.gameState()) {
+				panel.getChildren().add(bonusAvatar);
+			}
 		}
-		
+
 		ArrayList<ElementService> ennemies = data.getEnnemies();
 		ElementService e;
-		
+
 		for (int i = 0; i < ennemies.size(); i++) {
 			e = ennemies.get(i);
 			ennemyAvatar = new ImageView(ennemySpriteSheet);
@@ -263,10 +312,11 @@ public class Viewer implements ViewerService, RequireReadService {
 			ennemyAvatar.setTranslateY(shrink * e.getPosition().y + shrink * yModifier
 					+ -ennemyScale * 0.5 * ennemyAvatarViewports.get(e.getDirection()).getHeight()
 					+ shrink * ennemyScale);
-			panel.getChildren().add(ennemyAvatar);
+			if (!engine.gameState()) {
+				panel.getChildren().add(ennemyAvatar);
+			}
 		}
-		
-		panel.getChildren().addAll(heroesAvatar, textBonus, timer);
+
 		return panel;
 	}
 

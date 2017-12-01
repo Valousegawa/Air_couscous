@@ -13,7 +13,7 @@ public class HardCodedParameters {
 			heroesWidth = 21, heroesHeight = 31, heroesStep = 20, ennemyWidth = 21, ennemyHeight = 31,
 			phantomStep = 10, bonusWidth = 10, bonusHeight = 20;
 	public static final int enginePaceMillis = 100, spriteSlowDownRate = 7, objectif = 30;
-	public static final int maxWidth = 820, phantomWidth = 30, phantomHeight = 30;
+	public static final int maxWidth = 850, phantomWidth = 30, phantomHeight = 30;
 	public static final int mapWidth = 540, mapHeight = 600, mapPositionX = 10, mapPositionY = 60;
 	public static final int barSepWidth = 20, barSepHeight = 685, sepPositionX = 295, sepPositionY = 10;
 	public static final int jailWidth = 200, jailHeight = 200, jailPositionX = 20, jailPositionY = 80;

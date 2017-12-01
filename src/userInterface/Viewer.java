@@ -208,10 +208,10 @@ public class Viewer implements ViewerService, RequireReadService {
 		power.setTranslateY(yModifier + powerPositionY * yShrink);
 
 		// Objectifs
-		Text objectif = new Text(bonusGameX, bonusGameY, "bonus: " + data.getBonusValue());
+		Text objectif = new Text(bonusGameX, bonusGameY, "Objectif: " + HardCodedParameters.objectif);
 		objectif.setFont(new Font(.03 * shrink * defaultMainHeight));
 
-		Text objectifEnd = new Text(bonusEndX, bonusEndY, "bonus: " + data.getBonusValue());
+		Text objectifEnd = new Text(bonusEndX, bonusEndY, "Objectif: " + "Objectif: " + HardCodedParameters.objectif);
 		objectif.setFont(new Font(.03 * shrink * defaultMainHeight));
 
 		// Score

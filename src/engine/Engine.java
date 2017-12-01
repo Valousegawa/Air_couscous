@@ -45,6 +45,8 @@ public class Engine implements EngineService, RequireDataService {
 	private String sprite;
 	private double timer;
 	private int winLose = -1;
+	private Clip clipMusic;
+	private boolean soundPlayed;
 
 	public Engine() {
 	}
@@ -69,6 +71,7 @@ public class Engine implements EngineService, RequireDataService {
 		bonusTimer = 0;
 		sprite = "file:src/images/jmlp.png";
 		timer = 240000;
+		soundPlayed = false;
 	}
 
 	@Override
@@ -157,8 +160,18 @@ public class Engine implements EngineService, RequireDataService {
 
 					timer -= 100;
 					data.setSoundEffect(Sound.SOUND.None);
+				} else {
+					if (!soundPlayed) {
+						try {
+							playVictory();
+							playVictory2();
+							soundPlayed = true;
+						} catch (FileNotFoundException e) {
+							e.printStackTrace();
+						}
+						
+					}
 				}
-				data.setStepNumber(data.getStepNumber() + 1);
 			}
 		}, 0, HardCodedParameters.enginePaceMillis);
 	}
@@ -622,6 +635,7 @@ public class Engine implements EngineService, RequireDataService {
 	public boolean gameState() {
 		if (data.getScore() == HardCodedParameters.objectif && timer != 0) {
 			winLose = 1;
+			clipMusic.stop();
 			return true;
 		} else if (data.getScore() != HardCodedParameters.objectif && timer == 0) {
 			winLose = 0;
@@ -675,7 +689,7 @@ public class Engine implements EngineService, RequireDataService {
 			}
 		}).start();
 	}
-	
+
 	public synchronized void playBonusSound() throws FileNotFoundException {
 		new Thread(new Runnable() {
 			public void run() {
@@ -698,12 +712,36 @@ public class Engine implements EngineService, RequireDataService {
 			}
 		}).start();
 	}
-	
+
 	public synchronized void playMusic() throws FileNotFoundException {
 		new Thread(new Runnable() {
 			public void run() {
 				try {
 					File yourFile = new File("src/sound/music.wav");
+					AudioInputStream stream;
+					AudioFormat format;
+					DataLine.Info info;
+
+					stream = AudioSystem.getAudioInputStream(yourFile);
+					format = stream.getFormat();
+					info = new DataLine.Info(Clip.class, format);
+					clipMusic = (Clip) AudioSystem.getLine(info);
+					clipMusic.open(stream);
+					clipMusic.loop(Clip.LOOP_CONTINUOUSLY);
+					Thread.sleep(10000);
+					clipMusic.start();
+				} catch (Exception e) {
+					System.err.println(e.getMessage());
+				}
+			}
+		}).start();
+	}
+
+	public synchronized void playVictory() throws FileNotFoundException {
+		new Thread(new Runnable() {
+			public void run() {
+				try {
+					File yourFile = new File("src/sound/win.wav");
 					AudioInputStream stream;
 					AudioFormat format;
 					DataLine.Info info;
@@ -714,8 +752,29 @@ public class Engine implements EngineService, RequireDataService {
 					info = new DataLine.Info(Clip.class, format);
 					clip = (Clip) AudioSystem.getLine(info);
 					clip.open(stream);
-					clip.loop(Clip.LOOP_CONTINUOUSLY);
-			        Thread.sleep(10000);
+					clip.start();
+				} catch (Exception e) {
+					System.err.println(e.getMessage());
+				}
+			}
+		}).start();
+	}
+
+	public synchronized void playVictory2() throws FileNotFoundException {
+		new Thread(new Runnable() {
+			public void run() {
+				try {
+					File yourFile = new File("src/sound/win2.wav");
+					AudioInputStream stream;
+					AudioFormat format;
+					DataLine.Info info;
+					Clip clip;
+
+					stream = AudioSystem.getAudioInputStream(yourFile);
+					format = stream.getFormat();
+					info = new DataLine.Info(Clip.class, format);
+					clip = (Clip) AudioSystem.getLine(info);
+					clip.open(stream);
 					clip.start();
 				} catch (Exception e) {
 					System.err.println(e.getMessage());

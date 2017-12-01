@@ -119,11 +119,11 @@ public class Viewer implements ViewerService, RequireReadService {
 	public Parent getPanel() {
 		Group panel = new Group();
 
-		bonusGameX = 10.2 * shrink * objectifHeight + .5 * shrink * objectifWidth;
+		bonusGameX = 9 * shrink * objectifHeight + .5 * shrink * objectifWidth;
 		bonusGameY = 0.1 * shrink * objectifWidth + shrink * objectifHeight;
 		bonusEndX = 11 * shrink * scoreHeight + .5 * shrink * scoreWidth;
 		bonusEndY = 2.5 * shrink * scoreWidth + shrink * scoreHeight;
-		scoreGameX = 10.3 * shrink * scoreHeight + .5 * shrink * scoreWidth;
+		scoreGameX = 8.99 * shrink * scoreHeight + .5 * shrink * scoreWidth;
 		scoreGameY = 0.1 * shrink * objectifWidth + shrink * objectifHeight;
 		scoreEndX = 11 * shrink * scoreHeight + .5 * shrink * scoreWidth;
 		scoreEndY = 1 * shrink * scoreWidth + shrink * scoreHeight;
